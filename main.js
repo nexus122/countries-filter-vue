@@ -6,8 +6,10 @@ Vue.createApp({
             apiData: [],
             regionCountryFilter: '',
             searchTextCotnent: '',
+            themeMode: false,
             modalActive: 'hidden',
-            currentTarget: {}
+            currentTarget: {},
+            lowPoblation: false
         }
     },
     methods:{
@@ -23,11 +25,16 @@ Vue.createApp({
         },
         toggleModal(){
             this.modalActive = this.modalActive == 'open' ? 'hidden': 'open'
+        },
+        changeThemeModel(){
+            this.themeMode = !this.themeMode
         }
     },    
     computed:{
         countries(){
-            let filterCountryes = this.apiData.filter(country=> {
+            let filterCountryes = this.apiData.sort((c1, c2) =>  c1.population < c2.population ? 1: c1.population > c2.population ? -1:0)
+
+            filterCountryes = this.apiData.filter(country=> {
                 if(this.regionCountryFilter == '' || this.regionCountryFilter == 'all'){                    
                     return this.apiData;
                 }
@@ -36,17 +43,17 @@ Vue.createApp({
                 }
             })
 
-            filterCountryes = filterCountryes.filter(country=> country.name.common.toUpperCase().includes(this.searchTextCotnent.toUpperCase()))
+            filterCountryes = filterCountryes.filter(country=> country.name.common.toUpperCase().includes(this.searchTextCotnent.toUpperCase()))            
 
             return filterCountryes
+        },
+        alertLowPopulation(){
+            return this.filteredCountries.length >= 1 && countries.every(country => {
+                return country.population < 100000000
+            })
         }
     },
     created(){
         this.getData();
     }
 }).mount('#app');
-
-// Cambiar la clase del body (no gobernado por vue) escucha el click del btn dark mode y añade o quita una clase para volverlo un tema "claro" o "oscuro"
-document.querySelector('.btn-toggle').addEventListener('click', function(){
-    document.querySelector('body').classList.toggle('light');
-})

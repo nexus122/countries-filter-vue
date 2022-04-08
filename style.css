@@ -188,8 +188,6 @@ select {
   height: 100%;
   top: 0;
   left: 0;
-
-  visibility: hidden;
 }
 
 .country-details {
@@ -201,7 +199,7 @@ select {
 
 .country-content {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 3rem;
 }
 
@@ -215,27 +213,29 @@ select {
   visibility: visible;
 }
 
-.back-btn {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1em;
-}
-
 .btn {
   background: var(--clr-card-background);
   color: var(--clr-text);
   border: none;
+  padding: 0.5rem 2rem;
   border-radius: 0.3rem;
   font-size: inherit;
   font-weight: 300;
   box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
   margin-right: 1rem;
-  margin-bottom: 1em;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 3rem;
 }
 
 .modal.open {
   visibility: visible;
+  position: fixed;
+  width: 100%;
 }
 
 .hidden {
@@ -243,10 +243,12 @@ select {
 }
 
 @media screen and (min-width: 900px) {
+
   /* MAIN */
   main {
     padding: 3rem 4rem;
   }
+
   /* search filter container  */
 
   .search-filter-container {
@@ -269,5 +271,6 @@ select {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1em;
   }
 }

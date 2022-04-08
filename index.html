@@ -11,75 +11,130 @@
 </head>
 
 <body>
-  <header>
-    <a href="#" class="logo">Where in the world?</a>
-    <button class="btn-toggle">
-      <i class="fa-solid fa-moon"></i><span>Dark Mode</span>
-    </button>
-  </header>
-
   <main id="app">
-    <div class="main-container">
-      <section class="search-filter-container">
-        <div class="search-field">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input v-model="searchTextCotnent" class="search-input" type="text" placeholder="Search for a country..." />
-        </div>
+    <div class="app" :class="themeMode ? 'light':''">
+      <header>
+        <a href="#" class="logo">Where in the world?</a>
+        <button class="btn-toggle" @click="changeThemeModel" v-if="themeMode">
+          <i class="fa-solid fa-moon"></i><span>Dark Mode</span>
+        </button>
+        <button class="btn-toggle" @click="changeThemeModel" v-else>
+          <i class="fa-solid fa-sun"></i><span>Ligth Mode</span>
+        </button>
+      </header>
 
-        <select v-model="regionCountryFilter" name="regions" id="regions" aria-label="regions">
-          <option value="">Filter by Region</option>
-          <option value="all">All</option>
-          <option value="africa">Africa</option>
-          <option value="americas">America</option>
-          <option value="asia">Asia</option>
-          <option value="europe">Europe</option>
-          <option value="oceania">Oceania</option>
-        </select>
-      </section>
 
-      <div v-if="currentTarget != {}" class="modal country-info-page" :class="modalActive">
-        <button @click="toggleModal" class="btn back-btn"><i class="fa-solid fa-arrow-left-long"></i> Back Home</button>
-        <div class="country-content">
-
-          <div class="modal-flag">
-            <img :src="currentTarget.flags.png" :alt="currentTarget.name.common">
+      <div class="main-container">
+        <section class="search-filter-container">
+          <div class="search-field">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input v-model="searchTextCotnent" class="search-input" type="text" placeholder="Search for a country..." />
           </div>
 
-          <div class="country-details">
-            <h1>{{currentTarget.name.official}}</h1>
-            <p>Native Name: <span>{{currentTarget.name.common}}</span></p>
-            <p>Population: <span>{{currentTarget.population}}</span></p>
-            <p>Region: <span>{{currentTarget.region}}</span></p>
-            <p>Subregion: <span>{{currentTarget.subregion}}</span></p>
-            <p>Capital: <span>{{Array.isArray(currentTarget.capital) ? currentTarget.capital[0]:currentTarget.capital}}</span></p>
-            <p>Border countries: <span>{{currentTarget.borders}}</span></p>
-            <p>Top Level Domain: <span>{{currentTarget.tld}}</span></p>
-            <p>Currencies: <span>{{currentTarget.fifa}}</span></p>
-            <p>Lenguajes: <span>{{currentTarget.languages}}</span></p>
-          </div>
-        </div>
+          <select v-model="regionCountryFilter" name="regions" id="regions" aria-label="regions">
+            <option value="">Filter by Region</option>
+            <option value="all">All</option>
+            <option value="africa">Africa</option>
+            <option value="americas">America</option>
+            <option value="asia">Asia</option>
+            <option value="europe">Europe</option>
+            <option value="oceania">Oceania</option>
+          </select>          
+        </section>
 
-      </div>
+        <p style="color:white" v-show="lowPoblation">Todos los paises aqui mostrados tienen pocos habitantes</p>
 
-      <div class="cards">
-        <div v-for="country in countries">
-          <div @click="changeCurrentTarget(country)" class="card card-nombreDelPais">
-            <!-- Pista pasa usar el v-for-->
-            <img class="flag" :src="country.flags.png" alt="nombreDelPais flag" />
-            <div class="content">
-              <h3 class="name">{{country.name.common}}</h3>
-              <div><span class="country-info">Population: </span><span class="population">{{country.population}}</span>
+        <section v-if="currentTarget != {}" class="modal country-info-page" :class="modalActive">
+          <div class="modal-content">
+            <!-- Boton de volver atras del modal -->
+            <button class="btn back-btn" @click="toggleModal">
+              <i class="fa-solid fa-arrow-left"></i>Back
+            </button>
+
+            <div class="country-details">
+
+              <div class="modal-flag">
+                <img :src="currentTarget.flags.png" :alt="currentTarget.name.common">
               </div>
-              <div><span class="country-info">Region: </span><span class="region">{{country.region}}</span></div>
+              <div class="country-content">
+                <h3 class="modal-title">{{currentTarget.name.official}}</h3>
+                <div class="country-content-middle">
+                  <div class="content-middle-left">
+                    <div class="native-name country-info">
+                      <span>Native Name</span>
+                      <span>{{currentTarget.name.common}}</span>
+                    </div>
+                    <div class="population country-info">
+                      <span>Population</span>
+                      <span>{{currentTarget.population}}</span>
+                    </div>
+                    <div class="region country-info">
+                      <span>Region</span>
+                      <span>{{currentTarget.region}}</span>
+                    </div>
+                    <div class="subregion country-info">
+                      <span>Subregion</span>
+                      <span>{{currentTarget.subregion}}</span>
+                    </div>
+                    <div class="capital country-info">
+                      <span>Capital</span>
+                      <span>{{Array.isArray(currentTarget.capital) ?
+                        currentTarget.capital[0]:currentTarget.capital}}</span>
+                    </div>
+                  </div>
+                  <div class="content-middle-right">
+                    <div class="domain country-info">
+                      <span>Top Level Domain</span>
+                      <span>{{currentTarget.tld[0]}}</span>
+                    </div>
+                    <div class="fifa country-info">
+                      <span>Currencies</span>
+                      <span>{{currentTarget.fifa}}</span>
+                    </div>
+                    <div class="Lenguages country-info">
+                      <span>Lenguajes</span>
+                      <span v-for="leng in currentTarget.languages">
+                        {{leng}},
+                      </span>
+                    </div>
+                  </div>                 
+                </div>
 
-              <div v-if="Array.isArray(country.capital)"><span v-if="" class="country-info">Capital: </span><span
-                  class="capital">{{Array.isArray(country.capital) ? country.capital[0]:country.capital}}</span></div>
+                <!-- Aapartado para poner los paises que hacen frontera -->
+                <div class="border-country-container">
+                  <span>Border Countries: </span>
+                  <div class="country-buttons">
+                    <p v-if="!currentTarget.borders">No border countries</p>
+                    <button class="btn" v-for="borderCountry in currentTarget.borders">
+                      {{ borderCountry }}
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="cards">
+          <div v-for="country in countries">
+            <div @click="changeCurrentTarget(country)" class="card card-nombreDelPais">
+              <!-- Pista pasa usar el v-for-->
+              <img class="flag" :src="country.flags.png" alt="nombreDelPais flag" />
+              <div class="content">
+                <h3 class="name">{{country.name.common}}</h3>
+                <div><span class="country-info">Population: </span><span
+                    class="population">{{country.population}}</span>
+                </div>
+                <div><span class="country-info">Region: </span><span class="region">{{country.region}}</span></div>
+
+                <div v-if="Array.isArray(country.capital)"><span v-if="" class="country-info">Capital: </span><span
+                    class="capital">{{Array.isArray(country.capital) ? country.capital[0]:country.capital}}</span></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
-      <section class="modal country-info-page"></section>
     </div>
   </main>
 
